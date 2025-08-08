@@ -1,21 +1,6 @@
 # Legal AI Infrastructure
 
-A CDK-based infrastructure project for deploying AWS resources to support legal AI applications. This project creates IAM roles and permissions for Lambda functions to access Amazon Bedrock services.
-
-## 🏗️ Architecture
-
-### Current Resources
-
-- **IAM Role**: `{prefix}-bedrock-role` - Lambda execution role with Bedrock permissions
-- **Trust Policy**: Allows Lambda functions to assume the role
-- **Attached Policies**:
-  - `AWSLambdaBasicExecutionRole` - Basic Lambda execution permissions
-  - `AmazonBedrockFullAccess` - Full access to Amazon Bedrock services
-
-### Environment Strategy
-
-- **Dev Environment**: Auto-deploys on every push to `main`
-- **Prod Environment**: Manual deployment with confirmation
+A CDK-based infrastructure project for deploying AWS resources to support Precedent AI.
 
 ## 🚀 Quick Start for New Team Members
 
@@ -132,24 +117,6 @@ legal-ai-infra/
 ├── cdk.json               # CDK configuration
 └── package.json           # Dependencies
 ```
-
-## 🔐 Security & Permissions
-
-### Required AWS Permissions
-
-The GitHub Actions workflow needs these permissions:
-
-- CloudFormation (create/update/delete stacks)
-- IAM (create/update roles and policies)
-- S3 (CDK asset storage)
-- Lambda (if adding Lambda functions)
-- Bedrock (for AI model access)
-
-### IAM Role Details
-
-- **Role Name**: `{prefix}-bedrock-role`
-- **Trusted Entity**: Lambda functions
-- **Purpose**: Allow Lambda functions to access Amazon Bedrock
 
 ## 🐛 Troubleshooting
 
