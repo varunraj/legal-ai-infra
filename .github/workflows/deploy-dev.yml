@@ -38,7 +38,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Bootstrap CDK (if needed)
-        run: npx cdk bootstrap --require-approval never
+        run: |
+          if ! npx cdk bootstrap --require-approval never; then
+            echo "Bootstrap failed, but continuing with deployment..."
+            echo "You may need to bootstrap manually or check permissions"
+          fi
         continue-on-error: true
 
       - name: Synthesize CDK
