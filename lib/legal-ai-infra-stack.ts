@@ -1,16 +1,27 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { Stack, StackProps } from "aws-cdk-lib";
+import { Construct } from "constructs";
+import { Role, ServicePrincipal, ManagedPolicy } from "aws-cdk-lib/aws-iam";
 
-export class LegalAiInfraStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+interface LegalAiInfraStackProps extends StackProps {
+  prefix: string;
+}
+
+export class LegalAiInfraStack extends Stack {
+  constructor(scope: Construct, id: string, props: LegalAiInfraStackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const { prefix } = props;
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'LegalAiInfraQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    // Example: dev-bedrock-role or prod-bedrock-role
+    const bedrockRole = new Role(this, `${prefix}-BedrockInvokeRole`, {
+      roleName: `${prefix}-bedrock-role`,
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      managedPolicies: [
+        ManagedPolicy.fromAwsManagedPolicyName(
+          "service-role/AWSLambdaBasicExecutionRole"
+        ),
+        ManagedPolicy.fromAwsManagedPolicyName("AmazonBedrockFullAccess"),
+      ],
+    });
   }
 }

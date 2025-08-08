@@ -1,0 +1,49 @@
+name: Deploy to Dev
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Bootstrap CDK (if needed)
+        run: npx cdk bootstrap --require-approval never
+        continue-on-error: true
+
+      - name: Synthesize CDK
+        run: npx cdk synth
+
+      - name: Deploy to dev (on main push)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: npx cdk deploy --require-approval never --context stage=dev
+
+      - name: Show diff (on PR)
+        if: github.event_name == 'pull_request'
+        run: npx cdk diff --context stage=dev
